@@ -35,7 +35,6 @@ app.get('/api/persons', (req, res) => {
     Person.find({}).then(persons => {
         res.status(200).json(persons)
     })
-    // res.json(persons)
 })
 
 app.get('/api/persons/:id', (req, res, next) => {
@@ -71,6 +70,21 @@ app.post('/api/persons', (req, res) => {
     })
 })
 
+app.put('/api/persons/:id', (req, res, next) => {
+    const body = req.body
+
+    const person = {
+        name: body.name,
+        phone: body.phone
+    }
+
+    Person.findByIdAndUpdate(req.params.id, person, { new: true })
+        .then(updatedPerson => {
+            res.status(200).json(updatedPerson)
+        })
+        .catch(error => next(error))
+})
+
 app.delete('/api/persons/:id', (req, res, next) => {
     const id = req.params.id
     Person.findByIdAndDelete(id)
@@ -94,7 +108,6 @@ const errorHandler = (error, request, response, next) => {
     }
     next(error)
 }
-
 // controlador de solicitudes que resulten en errores
 app.use(errorHandler)
 
