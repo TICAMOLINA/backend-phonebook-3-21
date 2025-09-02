@@ -27,8 +27,11 @@ app.get('/', (req, res) => {
 
 app.get('/info', (req, res) => {
     let myDate = new Date()
-    res.send(`<p>Phonebook has info of ${persons.length} people</p>
-    <p>${myDate}</p>`)
+    
+    Person.find({}).then(persons => {
+        res.status(200).send(`<p>Phonebook has info of ${persons.length} people</p>
+        <p>${myDate}</p>`)
+    })
 })
 
 app.get('/api/persons', (req, res) => {
