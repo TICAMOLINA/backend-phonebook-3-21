@@ -17,24 +17,34 @@ mongoose.connect(url)
 
 
 const personSchema = new mongoose.Schema({
-    name: {
-      type: String,
-      require: true,
-      minLength: 3
+  name: {
+    type: String,
+    require: true,
+    minLength: 3
+  },
+  phone: {
+    type: String,
+    require: true,
+    minLength: 8,
+    validate: {
+      validator: function (v) {
+        return /^\d{2,3}-\d{7,8}$/.test(v);
+      },
+      message: props => `${props.value} is not a valid phone number!`
     },
-    phone: String,
+  }
 })
 
 personSchema.set('toJSON', { // opción del schema que define cómo se serializa a JSON un documento Mongoose
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
-/*  Crea un campo id “lindo” para el front (string simple).
-_id es un ObjectId (tipo especial de MongoDB); pasarlo a string facilita usarlo como key en React, etc.*/
+    /*  Crea un campo id “lindo” para el front (string simple).
+    _id es un ObjectId (tipo especial de MongoDB); pasarlo a string facilita usarlo como key en React, etc.*/
     delete returnedObject._id
-/* Oculta el campo _id original (ya no hace falta porque tenemos id).*/
+    /* Oculta el campo _id original (ya no hace falta porque tenemos id).*/
     delete returnedObject.__v
-/* Quita __v, que es la clave de versión interna de Mongoose (sirve para control de concurrencia y versionado de documentos).
-No aporta nada al cliente y confunde.  */
+    /* Quita __v, que es la clave de versión interna de Mongoose (sirve para control de concurrencia y versionado de documentos).
+    No aporta nada al cliente y confunde.  */
   }
 })
 
